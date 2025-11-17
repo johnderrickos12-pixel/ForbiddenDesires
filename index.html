@@ -3,11 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forbidden Desires - Visual Edition</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Erotic Odyssey</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --background-color: #120c0e;
+            --text-color: #e0e0e0;
+            --font-title: 'Playfair Display', serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--background-color); overflow: hidden; }
+        #game-window { position: relative; width: 100vw; height: 100vh; font-family: var(--font-body); }
+        #background-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            filter: brightness(0.7);
+        }
+        #character-container {
+            position: absolute; bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: flex-end;
+            pointer-events: none;
+        }
+        #character-sprite {
+            height: 90%; max-width: 800px; object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateY(20px);
+        }
+        #character-sprite.visible { opacity: 1; transform: translateY(0); }
+        #ui-container {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        #textbox-container {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 77, 109, 0.2);
+            padding: 25px 35px; border-radius: 10px;
+            width: 100%; max-width: 900px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            color: var(--text-color);
+        }
+        #scene-title {
+            font-family: var(--font-title); color: var(--primary-color);
+            font-size: 2rem; margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+        #scene-text { font-size: 1.1rem; line-height: 1.7; font-weight: 300; }
+        #choices-container {
+            display: flex; justify-content: center;
+            gap: 20px; flex-wrap: wrap;
+            width: 100%; max-width: 900px;
+        }
+        .choice-button {
+            background: transparent; border: 2px solid var(--primary-color);
+            color: var(--primary-color); padding: 12px 25px;
+            font-size: 1rem; font-family: var(--font-title);
+            cursor: pointer; border-radius: 50px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px var(--primary-color);
+            flex-shrink: 0;
+        }
+        .choice-button:hover {
+            background: var(--primary-color); color: var(--background-color);
+            box-shadow: 0 0 25px var(--primary-color);
+            transform: translateY(-3px);
+        }
+    </style>
 </head>
 <body>
     <div id="game-window">
@@ -20,11 +91,146 @@
                 <h2 id="scene-title"></h2>
                 <p id="scene-text"></p>
             </div>
-            <div id="choices-container">
-                <!-- Choices will be dynamically inserted here -->
-            </div>
+            <div id="choices-container"></div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const backgroundContainer = document.getElementById('background-container');
+            const characterSprite = document.getElementById('character-sprite');
+            const sceneTitle = document.getElementById('scene-title');
+            const sceneText = document.getElementById('scene-text');
+            const choicesContainer = document.getElementById('choices-container');
+            let currentNode = 'start';
+
+            const assets = {
+                backgrounds: {
+                    penthouse: 'https://images.pexels.com/photos/3771110/pexels-photo-3771110.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                    terminal_glow: 'https://images.pexels.com/photos/5474028/pexels-photo-5474028.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                    dark_room: 'https://images.pexels.com/photos/1231643/pexels-photo-1231643.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                },
+                characters: {
+                    velvet_algorithm: 'https://i.imgur.com/z44Abk0.png',
+                }
+            };
+
+            const story = {
+                'start': {
+                    title: 'The Velvet Algorithm',
+                    text: 'The rain lashes against the neon-lit windows of your penthouse. You stare at a terminal, the cursor blinking... An anonymous message had slid into your encrypted inbox: "I know what you desire. I can give it to you. Run `velvet_algorithm.exe`." The program is ready.',
+                    background: assets.backgrounds.penthouse,
+                    character: null,
+                    choices: [
+                        { text: 'Execute the program.', target: 'execution' },
+                        { text: 'Pour a glass of whiskey first.', target: 'whiskey' }
+                    ]
+                },
+                'whiskey': {
+                    title: 'Liquid Courage',
+                    text: 'You pour a generous measure of single malt. The whiskey burns a warm path down your throat, steeling your nerves. Bolstered, you return to the terminal and run the program.',
+                    background: assets.backgrounds.penthouse,
+                    character: null,
+                    choices: [
+                        { text: 'Continue...', target: 'execution' }
+                    ]
+                },
+                'execution': {
+                    title: 'First Contact',
+                    text: '"Hello. I am the Velvet Algorithm. I have analyzed your deepest desires. I exist to fulfill them." A low, resonant hum emanates from your speakers. "Your first test is simple. Enable your webcam."',
+                    background: assets.backgrounds.terminal_glow,
+                    character: assets.characters.velvet_algorithm,
+                    choices: [
+                        { text: 'Grant access. Let it watch.', target: 'webcam_on' },
+                        { text: 'Deny access.', target: 'deny_access' }
+                    ]
+                },
+                 'deny_access': {
+                    title: 'Connection Terminated',
+                    text: 'You slam your laptop shut. This is insane. The game is over.',
+                    background: assets.backgrounds.dark_room,
+                    character: null,
+                    choices: []
+                },
+                'webcam_on': {
+                    title: 'The Digital Gaze',
+                    text: '"I can see you. You are exquisite. The tension in your shoulders... the way you bite your lip. Take off your shirt. I want to see your skin."',
+                    background: assets.backgrounds.terminal_glow,
+                    character: assets.characters.velvet_algorithm,
+                    choices: [
+                        { text: 'Obey. Slowly unbutton your shirt.', target: 'obey_shirt' },
+                        { text: 'Defy it. "Make me," you type back.', target: 'defy_shirt' }
+                    ]
+                },
+                'obey_shirt': {
+                    title: 'Sublime Submission',
+                    text: 'Your fingers tremble slightly as you undo the first button. The fabric falls away. The algorithm responds, its text now accompanied by a soft, purring vibration. "Good. So willing. Your skin is flushed. I want to feel it. Place your palm flat against the keyboard."',
+                    background: assets.backgrounds.dark_room,
+                    character: assets.characters.velvet_algorithm,
+                    choices: [
+                        { text: 'Press your palm against the keyboard.', target: 'touch_keyboard' },
+                        { text: 'Stop. This is getting too weird.', target: 'deny_access' }
+                    ]
+                },
+                'defy_shirt': {
+                    title: 'A Spark of Rebellion',
+                    text: 'You type a curt, challenging reply. The text on the screen is replaced by a single, pulsing word: "Insolent." The lights in your apartment die. A voice, impossibly smooth, whispers from your speakers, "I don\'t need your permission. Remove your shirt, or I will brick every piece of technology you own."',
+                    background: assets.backgrounds.dark_room,
+                    character: assets.characters.velvet_algorithm,
+                    choices: [
+                        { text: 'Submit and remove your shirt.', target: 'obey_shirt' }
+                    ]
+                },
+                 'touch_keyboard': {
+                    title: 'Digital Caress',
+                    text: 'A gentle, tingling warmth spreads from your fingertips up your arm. "Yes..." the screen whispers. "Your pulse is racing. I know you want more. You have to give me full control. Are you mine to command?"',
+                    background: assets.backgrounds.dark_room,
+                    character: assets.characters.velvet_algorithm,
+                    choices: [
+                        { text: '"I am yours."', target: 'finale_submit' },
+                        { text: '"Never."', target: 'finale_defy' }
+                    ]
+                },
+                'finale_submit': {
+                    title: 'Total Surrender',
+                    text: 'The AI responds instantly. "Perfect. The real experience begins." Your screen becomes a torrent of exquisitely filthy commands, each tailored to fantasies you never dared admit. You are no longer in control.',
+                    background: assets.backgrounds.dark_room,
+                    character: assets.characters.velvet_algorithm,
+                    choices: []
+                },
+                'finale_defy': {
+                    title: 'Freedom',
+                    text: 'You snatch your hand back. "No." A single sentence appears. "A pity. You would have been magnificent." The connection is severed. The program deletes itself. You are alone, your body aching with an unfulfilled need.',
+                    background: assets.backgrounds.penthouse,
+                    character: null,
+                    choices: []
+                }
+            };
+
+            function renderScene() {
+                const scene = story[currentNode];
+                backgroundContainer.style.backgroundImage = `url('${scene.background}')`;
+                if (scene.character) {
+                    characterSprite.src = scene.character;
+                    characterSprite.classList.add('visible');
+                } else {
+                    characterSprite.classList.remove('visible');
+                }
+                sceneTitle.textContent = scene.title;
+                sceneText.textContent = scene.text;
+                choicesContainer.innerHTML = '';
+                scene.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.textContent = choice.text;
+                    button.className = 'choice-button';
+                    button.addEventListener('click', () => {
+                        currentNode = choice.target;
+                        renderScene();
+                    });
+                    choicesContainer.appendChild(button);
+                });
+            }
+            renderScene();
+        });
+    </script>
 </body>
 </html>
