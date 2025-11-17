@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Elysian - The Ultimate VR Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #a7a7a7;
+            --background-color: #000000;
+            --accent-color: #db00ff;
+            --card-bg-color: rgba(18, 18, 18, 0.85);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            overflow-x: hidden;
+        }
+
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            filter: blur(8px) brightness(0.4);
+            transform: scale(1.1);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 0;
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 5%;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+
+        nav a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 300;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 5px var(--accent-color);
+        }
+
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #hero h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 0 0 20px rgba(219, 0, 255, 0.7);
+        }
+
+        #hero p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            max-width: 600px;
+            color: var(--secondary-color);
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--accent-color);
+        }
+        
+        .section {
+            padding: 120px 0;
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 80px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--primary-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg-color);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .feature-card p {
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.4s ease, filter 0.4s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 50px 0;
+            background: #050505;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        footer p {
+            color: var(--secondary-color);
+        }
+
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop id="video-background">
+        <!-- Placeholder video - a real project would use actual game footage or a cinematic trailer -->
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-liquid-bubbles-922-large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <header>
+        <div class="logo">ELYSIAN</div>
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h1>Project Elysian</h1>
+            <p>Experience a new reality. Lifelike characters, unparalleled immersion, and physics-based interaction that blurs the line between the virtual and the real. Your ultimate VR fantasy is here.</p>
+            <a href="#" class="cta-button">Enter the Experience</a>
+        </section>
+
+        <div class="section" id="features">
+            <div class="container">
+                <h2 class="section-title">Core Technologies</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>Hyper-Realistic Characters</h3>
+                        <p>Powered by Unreal Engine's MetaHuman technology, every character is crafted with photorealistic detail, expressing subtle emotions and lifelike movements.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Advanced Physics Interaction</h3>
+                        <p>Feel every touch. With a bespoke system built on UE5's Chaos Physics, characters and environments react to your hands with stunning soft-body and fluid dynamics.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Living, Breathing Worlds</h3>
+                        <p>Explore breathtaking environments built with Quixel Megascans and illuminated by Lumen's dynamic global illumination for unparalleled realism and atmosphere.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="gallery">
+            <div class="container">
+                <h2 class="section-title">Gallery</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item"><img src="https://images.pexels.com/photos/7172635/pexels-photo-7172635.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Gallery Image 1"></div>
+                    <div class="gallery-item"><img src="https://images.pexels.com/photos/5711923/pexels-photo-5711923.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Gallery Image 2"></div>
+                    <div class="gallery-item"><img src="https://images.pexels.com/photos/9820579/pexels-photo-9820579.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Gallery Image 3"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Project Elysian. All Rights Reserved. This is a fictional project demonstration.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple parallax scroll effect for the hero section
+        const hero = document.getElementById('hero');
+        window.addEventListener('scroll', () => {
+            let offset = window.pageYOffset;
+            hero.style.backgroundPositionY = offset * 0.7 + 'px';
+        });
+    </script>
+</body>
+</html>
